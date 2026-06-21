@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { Container, Section, Card, Button } from '@/styles/components';
-import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 const DashboardGrid = styled.div`
   display: grid;
@@ -41,10 +41,17 @@ const AlertBox = styled.div`
 `;
 
 export default function Dashboard() {
-  const router = useRouter();
-  const isLoggedIn = false; // In production, check actual auth state
+  const { data: session, status } = useSession();
 
-  if (!isLoggedIn) {
+  if (status === 'loading') {
+    return (
+      <Container>
+        <p>Loading...</p>
+      </Container>
+    );
+  }
+
+  if (!session) {
     return (
       <>
         <Head>
@@ -52,11 +59,8 @@ export default function Dashboard() {
         </Head>
         <Container>
           <Section>
-            <h1>Dashboard</h1>
-            <p>Please log in to access your dashboard.</p>
-            <Button onClick={() => router.push('/auth/login')}>
-              Log In
-            </Button>
+            <h1>Access Denied</h1>
+            <p>Please log in to view this page.</p>
           </Section>
         </Container>
       </>
@@ -70,7 +74,7 @@ export default function Dashboard() {
       </Head>
       <Container>
         <Section>
-          <h1>Welcome to Your Dashboard</h1>
+          <h1>Welcome, {session.user?.name || session.user?.email}!</h1>
           <p>Manage your subscriptions with confidence.</p>
         </Section>
 
