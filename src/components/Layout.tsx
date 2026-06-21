@@ -2,8 +2,13 @@ import React from 'react';
 import { Header, Nav, Logo, NavLinks, Footer, FooterContent, FooterBottom } from '@/styles/layout';
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const router = useRouter();
+
+  const activeClass = (path: string) => (router.pathname === path ? 'active' : '');
+
   return (
     <>
       <Header>
@@ -12,10 +17,10 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Logo>TrustVault</Logo>
           </Link>
           <NavLinks>
-            <li><Link href="/">Home</Link></li>
-            <li><Link href="/about">About</Link></li>
-            <li><Link href="/security">Security</Link></li>
-            <li><Link href="/dashboard">Dashboard</Link></li>
+            <li><Link href="/" className={activeClass('/')}>Home</Link></li>
+            <li><Link href="/about" className={activeClass('/about')}>About</Link></li>
+            <li><Link href="/security" className={activeClass('/security')}>Security</Link></li>
+            <li><Link href="/dashboard" className={activeClass('/dashboard')}>Dashboard</Link></li>
           </NavLinks>
 
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
