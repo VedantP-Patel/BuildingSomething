@@ -24,10 +24,22 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  session: { strategy: 'database' },
+  // 1. CHANGE THIS FROM 'database' TO 'jwt'
+  session: { strategy: 'jwt' }, 
+  
   callbacks: {
-    async session({ session, user }) {
-      if (user) session.user = { id: (user as any).id, name: user.name, email: user.email } as any;
+    // 2. ADD THIS JWT CALLBACK TO PASS THE USER ID TO THE TOKEN
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    // 3. UPDATE THE SESSION CALLBACK TO READ FROM THE TOKEN
+    async session({ session, token }) {
+      if (token && session.user) {
+        (session.user as any).id = token.id;
+      }
       return session;
     },
   },
